@@ -1,0 +1,31 @@
+[Unit]
+Description=Sonic Archival Node
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+TimeoutSec=900
+User=root
+ExecStart=/usr/local/bin/sonicd \
+        --datadir /root/sonic-index/sonic-data \
+        --cache 12000 --nat extip:<your-node-external-ip> \
+        --http \
+        --http.addr=0.0.0.0 \
+        --http.port=18545 \
+        --http.corsdomain=* \
+        --http.vhosts=* \
+        --http.api=eth,web3,net,ftm,txpool,abft,dag,trace,debug \
+        --ws \
+        --ws.addr=0.0.0.0 \
+        --ws.port=18546 \
+        --ws.origins=* \
+        --ws.api=eth,web3,net,ftm,txpool,abft,dag,trace,debug
+Environment="GOMEMLIMIT=90GiB"
+LimitNOFILE=200000
+
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target
