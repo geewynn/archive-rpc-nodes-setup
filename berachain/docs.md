@@ -1,5 +1,14 @@
 ## Berachain Node Setup
 
+## Prerequisite
+| Resource | Minimum                                              |
+| -------- | ---------------------------------------------------- |
+| **CPU**  | 8 cores                                              |
+| **OS**   | Debian 12 / Ubuntu 22.04                             |
+| **RAM**  | 48 GB                                               |
+| **Disk** | 4TB |
+
+
 ```bash
 mkdir beranode-setup
 cd beranode-setup

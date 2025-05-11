@@ -2,7 +2,7 @@
 This repository contains documentations and setup files for all the archive rpc nodes I have configured.
 
 
-1. Gravity - [Gravity](gravity/docs.md)
+1. Gravity - [Gravity](gravity/doc.md)
 2. Berachain - [Berachain](berachain/docs.md)
 3. Moonriver - [Moonriver](moonriver/docs.md)
 4. Optimism Sepolia Geth - [Optimism-Sepolia](optimism-sepolia/geth/docs.md)

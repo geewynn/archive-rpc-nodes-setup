@@ -5,6 +5,14 @@ This doc describes bare metal installation of the sonic nodes
 The Sonic Archive Node has a size of 590GB as observed on the 3/10/2025.
 
 ## Pre-Requisites
+| Resource | Minimum                                              |
+| -------- | ---------------------------------------------------- |
+| **CPU**  | 4-8 cores                                              |
+| **OS**   | Debian 12 / Ubuntu 22.04                             |
+| **RAM**  | 34 - 128 GB                                               |
+| **Disk** | 1TB |
+
+
 ### Update System
 ```bash
 sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y
