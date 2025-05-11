@@ -1,0 +1,47 @@
+version: '3.9'
+
+
+networks:
+  monitor-net:
+    driver: bridge
+  
+volumes:
+  moonriver-data: {}
+
+services:
+  moonriver:
+    image: moonbeamfoundation/moonbeam-tracing:v0.42.1-3401-latest
+    user: root
+    container_name: moonriver
+    volumes:
+      - "/var/lib/moonriver-data:/data"
+    restart: unless-stopped
+    command:
+      - --base-path=/data
+      - --chain=moonriver
+      - --name="babayaga"
+      - --rpc-port=9944
+      - --rpc-cors=all
+      - --unsafe-rpc-external
+      - --state-pruning=archive
+      - --trie-cache-size=1073741824
+      - --db-cache=64000
+      - --ethapi=debug,trace,txpool
+      - --wasm-runtime-overrides=/moonriver/moonriver-substitutes-tracing
+      - --runtime-cache-size=64
+      - --
+      - --name=" (Embedded Relay)"
+    expose:
+      - 9944 # rpc + ws parachain
+      - 9945 # rpc + ws relay chain
+      - 30333 # p2p parachain
+      - 30334 # p2p relay chain
+      - 9615 # prometheus parachain
+      - 9616 # prometheus relay chain
+    ports:
+      - "9944:9944" # rpc + ws parachain
+      - "9945:9945" # rpc + ws relay chain
+      - "30333:30333"
+      - "30334:30334"
+    networks:
+      - monitor-net

@@ -1,0 +1,46 @@
+version: '3.9'
+
+networks:
+  monitor-net:
+    driver: bridge
+
+volumes:
+  juno_data: {}
+
+services:
+  juno:
+    image: nethermind/juno:v0.14.2
+    user: root
+    container_name: juno
+    volumes:
+      - "/var/lib/juno-data:/data"
+    restart: unless-stopped
+    command:
+      - --db-path=/data
+      - --network=mainnet
+      - --http 
+      - --http-port=6060 
+      - --http-host=0.0.0.0
+      - --metrics
+      - --metrics-host=0.0.0.0 
+      - --metrics-port=9090
+      - --rpc-cors-enable
+      - --ws 
+      - --ws-port=6061
+      - --ws-host=0.0.0.0
+      - --log-level=trace
+      - --eth-node=wss://<l1-endpoint>
+    expose:
+      - 6060 
+      - 5050
+      - 9090 
+      - 8545 
+      - 6061 
+    ports:
+      - "5050:5050"   # P2P Port
+      - "6060:6060"   # HTTP RPC Port
+      - "9090:9090"   # Metrics Port
+      - "8545:8545"   # JSON-RPC (Ethereum compatible)
+      - "6061:6061"   # WebSocket
+    networks:
+      - monitor-net

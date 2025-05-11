@@ -1,0 +1,11 @@
+services:
+  rsk-node:
+    image: rsksmart/rskj:ARROWHEAD-6.3.1
+    container_name: rsk-node
+    ports:
+      - 5050:5050
+      - 4444:4444
+    volumes:
+      - rsk-data:/var/lib/rsk/.rsk
+      - ./node.conf:/etc/rsk/node.conf
+    restart: unless-stopped

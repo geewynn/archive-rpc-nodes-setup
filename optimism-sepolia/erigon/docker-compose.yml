@@ -1,0 +1,91 @@
+networks:
+  monitor-net:
+    driver: bridge
+
+volumes:
+  op-erigon_data: {}
+
+services:
+  opnode:
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.11.1
+    container_name: opnode
+    user: root  # Run as root
+    networks:
+      - monitor-net
+    restart: unless-stopped
+    expose:
+      - "7545"  # RPC
+      - "7373"  # METRICS
+    ports:
+      - "9222:9222"      # P2P TCP
+      - "9222:9222/udp"  # P2P UDP
+    volumes:
+      - /root/data/op-sepolia/optimism-erigon/jwt.hex:/root/data/optimism-sepolia/op-erigon/jwt.hex:ro
+    environment:
+      - OP_GETH_SEQUENCER_HTTP=https://sepolia-sequencer.optimism.io
+      - OP_NODE_NETWORK=op-sepolia
+      - OP_NODE_L1_ETH_RPC=${LAYER_1_RPC}
+      - OP_NODE_L1_BEACON=${LAYER_1_BEACON}
+      - OP_NODE_L2_ENGINE_AUTH=/root/data/optimism-sepolia/op-erigon/jwt.hex
+      - OP_NODE_L2_ENGINE_RPC=http://op-erigon:8551
+      - OP_NODE_L2_ENGINE_KIND=erigon
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=9222
+      - OP_NODE_P2P_LISTEN_UDP_PORT=9222
+      - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=7545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_VERIFIER_L1_CONFS=4
+      - OP_NODE_L1_TRUST_RPC=true
+
+  op-erigon:
+    image: testinprod/op-erigon:v2.61.3-0.8.4
+    container_name: op-erigon
+    user: root  # Run as root
+    restart: unless-stopped
+    expose:
+      - "8549"  # RPC
+      - "8546"  # WebSocket
+      - "7300"  # Metrics
+      - "8551"  # AuthRPC
+    ports:
+      - "8549:8549"
+      - "30303:30309"      # Peers
+      - "30303:30309/udp"  # Peers
+      - "8551:8551"
+    volumes:
+      - /root/data/optimism-sepolia/op-erigon/jwt.hex:/root/data/optimism-sepolia/op-erigon/jwt.hex:ro
+      - op-erigon_data:/data
+    command:
+      - --datadir=/data
+      - --authrpc.jwtsecret=/root/data/optimism-sepolia/op-erigon/jwt.hex
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.port=8551
+      - --authrpc.vhosts=*
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.port=8549
+      - --http.compression
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --http.api=eth,debug,net,trace,web3,erigon
+      - --private.api.addr=0.0.0.0:9095
+      - --ws
+      - --ws.compression
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=7300
+      - --torrent.download.rate=1000mb
+      - --torrent.port=42070
+      - --rpc.returndata.limit=1000000
+      - --txpool.gossip.disable=true
+      - --chain=op-sepolia
+      - --db.size.limit=8TB
+      - --nodiscover
+      - --p2p.allowed-ports=30303,30304,30305,30306,30307,30308,30309
+      - --rollup.sequencerhttp=https://sepolia-sequencer.optimism.io

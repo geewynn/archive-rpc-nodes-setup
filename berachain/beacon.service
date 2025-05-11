@@ -1,0 +1,23 @@
+[Unit]
+Description=beacond-node
+After=network.target
+
+[Service]
+Restart=on-failure
+RestartSec=5
+TimeoutSec=900
+User=root
+Nice=0
+LimitNOFILE=200000
+WorkingDirectory=/root/beranode-setup
+ExecStart=/root/beranode-setup/run-reth.sh
+    
+KillSignal=SIGTERM
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
+RETH_DATA: /root/beranode-setup/var/reth/data
+RETH_BIN: /root/.cargo/bin/reth

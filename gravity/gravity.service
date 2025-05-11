@@ -1,0 +1,34 @@
+[Unit]
+   Description=Gravity Alpha Mainnet Node
+   After=network.target
+
+   [Service]
+   Type=simple
+   Restart=on-failure
+   RestartSec=5
+   TimeoutSec=900
+   User=root
+   Nice=0
+   LimitNOFILE=200000
+   ExecStart=/root/nitro/build/bin/nitro \
+     --parent-chain.connection.url=<ethereum_mainnet_rpc> \
+     --persistent.chain=/root/.gravity/share/nitro/datadir/ \
+     --persistent.global-config=/root/.gravity/share/nitro/ \
+     --chain.id=1625 \
+     --chain.name=conduit-orbit-deployer \
+     --chain.info-json='[{"chain-id":1625,"parent-chain-id":1,"chain-name":"conduit-orbit-deployer", ...}]' \
+     --http.api=net,web3,eth \
+     --http.corsdomain=* \
+     --http.addr=0.0.0.0 \
+     --http.port=8547 \
+     --http.vhosts=* \
+     --node.data-availability.enable \
+     --node.data-availability.rest-aggregator.enable \
+     --node.data-availability.rest-aggregator.urls=https://das-gravity-mainnet-0.t.conduit.xyz \
+     --execution.forwarding-target=https://rpc.gravity.xyz \
+     --node.feed.input.url=wss://relay-gravity-mainnet-0.t.conduit.xyz \
+     --parent-chain.blob-client.beacon-url=<ethereum_beacon_chain_rpc>
+   KillSignal=SIGHUP
+
+   [Install]
+   WantedBy=multi-user.target

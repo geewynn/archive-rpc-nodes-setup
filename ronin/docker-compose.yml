@@ -1,0 +1,25 @@
+version: "3"
+services:
+  node:
+    image: ${NODE_IMAGE}
+    stop_grace_period: 5m
+    stop_signal: SIGINT
+    hostname: node
+    container_name: node
+    ports:
+      - 127.0.0.1:8545:8545
+      - 127.0.0.1:8546:8546
+      - 30303:30303
+      - 30303:30303/udp
+      - 6060:6060
+    volumes:
+      - ~/ronin/chaindata:/ronin
+    environment:
+      - SYNC_MODE=full
+      - PASSWORD=${PASSWORD}
+      - NETWORK_ID=${NETWORK_ID}
+      - RONIN_PARAMS=${RONIN_PARAMS}
+      - VERBOSITY=${VERBOSITY}
+      - MINE=${MINE}
+      - GASPRICE=${GASPRICE}
+      - ETHSTATS_ENDPOINT=${INSTANCE_NAME}:${CHAIN_STATS_WS_SECRET}@${CHAIN_STATS_WS_SERVER}:443
